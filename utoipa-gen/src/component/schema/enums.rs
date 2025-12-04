@@ -342,6 +342,7 @@ impl<'p> MixedEnum<'p> {
                 {
                     variant_features.push(Feature::NoRecursion(NoRecursion));
                 }
+
                 MixedEnumContent::new(
                     variant,
                     root,
@@ -399,13 +400,18 @@ impl MixedEnumContent {
     ) -> Result<Self, Diagnostics> {
         let mut tokens = TokenStream::new();
         let name = variant.ident.to_string();
-        // TODO support `description = ...` attribute via Feature::Description
-        // let description =
-        //     pop_feature!(variant_features => Feature::Description(_) as Option<Description>);
-        let variant_description =
-            CommentAttributes::from_attributes(&variant.attrs).as_formatted_string();
-        let description: Option<Description> =
-            (!variant_description.is_empty()).then(|| variant_description.into());
+
+        let description = pop_feature!(variant_features => Feature::Description(_) as Option<Description>)
+            .or_else(|| {
+                let comment = CommentAttributes::from_attributes(&variant.attrs);
+
+                if comment.is_empty() {
+                    None
+                } else {
+                    Some(comment.as_formatted_string().into())
+                }
+            });
+
         if let Some(description) = description {
             variant_features.push(Feature::Description(description))
         }

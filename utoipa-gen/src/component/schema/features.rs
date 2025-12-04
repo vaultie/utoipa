@@ -168,7 +168,8 @@ impl Parse for EnumNamedFieldVariantFeatures {
             Deprecated,
             MaxProperties,
             MinProperties,
-            NoRecursion
+            NoRecursion,
+            Description
         )))
     }
 }
@@ -188,7 +189,8 @@ impl Parse for EnumUnnamedFieldVariantFeatures {
             ValueType,
             Rename,
             Deprecated,
-            NoRecursion
+            NoRecursion,
+            Description
         )))
     }
 }
